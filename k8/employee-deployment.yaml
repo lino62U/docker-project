@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mscv-employee
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mscv-employee
+  template:
+    metadata:
+      labels:
+        app: mscv-employee
+    spec:
+      containers:
+        - name: mscv-employee
+          image: gcr.io/k8-clusters-474002/mscv-employee:1.0
+          ports:
+            - containerPort: 5002
+          env:
+            - name: DB_HOST
+              value: mysql
+            - name: DB_USER
+              value: myapp_user
+            - name: DB_PASSWORD
+              value: mypassword
+            - name: DB_NAME
+              value: myapp_db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mscv-employee
+spec:
+  selector:
+    app: mscv-employee
+  ports:
+    - port: 5002
+      targetPort: 5002
+  type: ClusterIP

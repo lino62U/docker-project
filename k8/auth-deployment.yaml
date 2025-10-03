@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mscv-auth
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mscv-auth
+  template:
+    metadata:
+      labels:
+        app: mscv-auth
+    spec:
+      containers:
+        - name: mscv-auth
+          image: gcr.io/k8-clusters-474002/mscv-auth:1.0
+          ports:
+            - containerPort: 5001
+          env:
+            - name: DB_HOST
+              value: mysql
+            - name: DB_USER
+              value: myapp_user
+            - name: DB_PASSWORD
+              value: mypassword
+            - name: DB_NAME
+              value: myapp_db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mscv-auth
+spec:
+  selector:
+    app: mscv-auth
+  ports:
+    - port: 5001
+      targetPort: 5001
+  type: ClusterIP
